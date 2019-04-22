@@ -4,7 +4,6 @@ var cors = require('cors')
 var path = require('path')
 var logger = require('morgan')
 var bodyParser = require('body-parser')
-var c = require('./config.js')
 
 var jwtHandler = require('./jwtHandler.js')
 var indexRouter = require('./routes/index')
