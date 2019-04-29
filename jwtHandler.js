@@ -44,7 +44,7 @@ let login = (req, res, next) => {
               name: user.name,
               email: user.email
             }
-          }, c.secret, { expiresIn: '1h' })
+          }, secret, { expiresIn: '1h' })
           res.json({
             success: true,
             message: 'Authentication successful!',
@@ -73,7 +73,7 @@ let checkToken = (req, res, next) => {
   }
 
   if (token) {
-    jwt.verify(token, c.secret, (err, decoded) => {
+    jwt.verify(token, secret, (err, decoded) => {
       if (err) {
         return res.json({
           success: false,
