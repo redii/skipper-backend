@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const mongodburi = process.env.MONGODBURI || ''
 
-mongoose.connect(c.mongodburi, { useNewUrlParser: true }, function(err) {
+mongoose.connect(mongodburi, { useNewUrlParser: true }, function(err) {
   if (err) {
     throw err
   } else {
