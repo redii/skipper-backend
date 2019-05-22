@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const mongodburi = process.env.MONGODBURI || 'mongodb://dev:qwe123@ds245512.mlab.com:45512/dev'
+const mongodburi = process.env.MONGODBURI
 
 mongoose.connect(mongodburi, { useNewUrlParser: true }, function(err) {
   if (err) {

@@ -1,10 +1,10 @@
 {
-  "name": "webapp-backend",
+  "name": "skipper-backend",
   "version": "0.0.0",
   "private": false,
   "scripts": {
-    "start": "node ./bin/www",
-    "production": "node ./bin/www MODE=development PORT=4000 MONGODBURI=XYZ"
+    "start": "MONGODBURI=mongodb://dev:qwe123@ds245512.mlab.com:45512/dev node ./bin/www",
+    "production": "MODE=production PORT=4000 MONGODBURI=XYZ node ./bin/www"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
