@@ -26,15 +26,13 @@ console.log('Server listening on port ', port)
  */
 
 if (mode == 'production') {
-  if (mode == 'production') {
-    var crt = fs.readFileSync('../ssl/rediide.crt')
-    var cacrt = fs.readFileSync('../ssl/rediide-ca.crt')
-    var key = fs.readFileSync('../ssl/rediide.key')
-    var ssl_options = {
-      key: key,
-      cert: crt,
-      ca: cacrt
-    }
+  var crt = fs.readFileSync('../ssl/rediide.crt')
+  var cacrt = fs.readFileSync('../ssl/rediide-ca.crt')
+  var key = fs.readFileSync('../ssl/rediide.key')
+  var ssl_options = {
+    key: key,
+    cert: crt,
+    ca: cacrt
   }
 
   var server = https.createServer(ssl_options, app)
