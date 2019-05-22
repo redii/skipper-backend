@@ -4,9 +4,27 @@
  * Module dependencies.
  */
 
+var mode = process.env.MODE || 'development'
+var fs = require('fs')
 var app = require('../app')
 var debug = require('debug')('webapp-backend:server')
 var http = require('http')
+var https = require('https')
+
+/**
+ * HTTPS Configuration
+ */
+
+if (mode == 'production') {
+  var crt = fs.readFileSync('../ssl/rediide.crt')
+  var cacrt = fs.readFileSync('../ssl/rediide-ca.crt')
+  var key = fs.readFileSync('../ssl/rediide.key')
+  var ssl_options = {
+    key: key,
+    cert: crt,
+    ca: cacrt
+  }
+}
 
 /**
  * Get port from environment and store in Express.
@@ -17,10 +35,14 @@ app.set('port', port)
 console.log('Server listening on port ', port)
 
 /**
- * Create HTTP server.
+ * Create HTTP/S server.
  */
 
-var server = http.createServer(app)
+if (mode == 'production') {
+  var server = https.createServer(app)
+} else {
+  var server = http.createServer(app)
+}
 
 /**
  * Listen on provided port, on all network interfaces.
