@@ -43,7 +43,8 @@ let login = (req, res, next) => {
               admin: user.admin,
               name: user.name,
               email: user.email
-            }
+            },
+            permissions: user.permissions
           }, secret, { expiresIn: '1h' })
           res.json({
             success: true,
