@@ -6,14 +6,18 @@ const UserSchema = require('./models/User')
 const secret = process.env.SECRET || 'qwe123'
 
 let signup = (req, res, next) => {
-  const admin = false
   const username = req.body.user.usernameSignup
   const password = req.body.user.passwordSignup
   bcrypt.genSalt(saltRounds, function(err, salt) {
     bcrypt.hash(password, salt, function(err, hash) {
       const password = hash
       const User = mongoose.model('users', UserSchema)
-      const newUser = new User({ admin, username, password })
+      const newUser = new User({
+        admin: false,
+        name: username,
+        password: password,
+        permissions: ['default']
+      })
       newUser.save(function(err) {
         if (!err) {
           res.json({
@@ -21,6 +25,7 @@ let signup = (req, res, next) => {
             message: 'Registration successful!'
           })
         } else {
+          console.log(err)
           res.json({
             success: false,
             message: 'Registration failed.'
