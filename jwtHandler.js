@@ -25,7 +25,6 @@ let signup = (req, res, next) => {
             message: 'Registration successful!'
           })
         } else {
-          console.log(err)
           res.json({
             success: false,
             message: 'Registration failed.'
@@ -44,11 +43,9 @@ let login = (req, res, next) => {
       bcrypt.compare(password, user.password, function(err, result) {
         if (result) {
           let token = jwt.sign({
-            user: {
-              admin: user.admin,
-              name: user.name,
-              email: user.email
-            },
+            admin: user.admin,
+            name: user.name,
+            email: user.email,
             permissions: user.permissions
           }, secret, { expiresIn: '1h' })
           res.json({
