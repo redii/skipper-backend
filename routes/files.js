@@ -40,7 +40,7 @@ router.post('/upload', (req, res, next) => {
           if (err) {
             res.json({
               success: false,
-              message: 'Error occured while saving the file.'
+              message: 'Error occured while saving in filesystem.'
             })
           } else {
             res.json({
@@ -52,14 +52,23 @@ router.post('/upload', (req, res, next) => {
       } else {
         res.json({
           success: false,
-          message: 'File already exists in db.'
+          message: 'File already exists in database.'
         })
       }
     })
   } else {
     res.json({
       success: false,
-      message: 'No file to upload provided.'
+      message: 'Please provide a file to upload.'
+    })
+  }
+})
+
+router.get('/download/:id', (req, res, next) => {
+  req.params.id
+  if (req.params.id) {
+    File.findOne({ _id: ObjectId(req.params.id), owner: req.user.name }, (err, file) => {
+      res.download(file.path, file.name)
     })
   }
 })
@@ -73,7 +82,7 @@ router.post('/delete', (req, res, next) => {
             if (err) {
               res.json({
                 success: false,
-                message: 'Error occured while deleting in filesystem.'
+                message: 'Error while deleting from filesystem.'
               })
             } else {
               res.json({
@@ -85,7 +94,7 @@ router.post('/delete', (req, res, next) => {
         } else {
           res.json({
             success: false,
-            message: 'Error while deleting file.'
+            message: 'Error while deleting from database.'
           })
         }
       })

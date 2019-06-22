@@ -16,7 +16,8 @@ let signup = (req, res, next) => {
         admin: false,
         name: username,
         password: password,
-        permissions: ['default']
+        permissions: ['default'],
+        createdOn: Date.now()
       })
       newUser.save(function(err) {
         if (!err) {
