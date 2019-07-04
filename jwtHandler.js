@@ -44,7 +44,6 @@ let login = (req, res, next) => {
       bcrypt.compare(password, user.password, function(err, result) {
         if (result) {
           let token = jwt.sign({
-            admin: user.admin,
             name: user.name,
             email: user.email,
             permissions: user.permissions

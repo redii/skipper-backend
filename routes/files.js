@@ -27,14 +27,14 @@ router.post('/upload', (req, res, next) => {
   var file = req.files.upload
   var filepath = `uploads/${req.user.name}/${file.name}`
   if (file) {
-    const newFile = new File({
+    var newFile = new File({
       name: file.name,
       size: file.size,
       path: filepath,
       owner: req.user.name,
       date: Date.now()
     })
-    newFile.save(function(err) {
+    newFile.save((err) => {
       if (!err) {
         file.mv(filepath, (err) => {
           if (err) {

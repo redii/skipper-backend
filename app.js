@@ -16,10 +16,14 @@ var indexRouter = require('./routes/index.js')
 var homeRouter = require('./routes/home.js')
 var adminRouter = require('./routes/admin.js')
 var filesRouter = require('./routes/files.js')
+var bankingRouter = require('./routes/banking.js')
 
 app.use(cors())
 app.use(bodyParser.json())
-app.use(fileUpload())
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : 'uploads/tmp/'
+}))
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -41,5 +45,8 @@ app.use('/api/admin', guard.check('admin'), adminRouter)
 
 // Upload module
 app.use('/api/files', guard.check([['admin'], ['default']]), filesRouter)
+
+// Banking module
+app.use('/api/banking', guard.check([['admin'], ['default']]), bankingRouter)
 
 module.exports = app
