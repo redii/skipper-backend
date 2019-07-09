@@ -2,9 +2,10 @@ const mongoose = require('mongoose')
 
 const TransactionSchema = new mongoose.Schema({
   owner: String,
-  account: String,
-  account: String,
+  category: String,
   date: Date,
+  account: String,
+  transactiondate: Date,
   valutadate: Date,
   bookingtype: String,
   usage: String,
