@@ -3,11 +3,14 @@ const router = express.Router()
 const mongoose = require('../mongooseHandler')
 const TransactionSchema = require('../models/Transaction')
 const Transaction = mongoose.model('transactions', TransactionSchema)
-const timestamp = require('time-stamp')
+const TransactionCategorySchema = require('../models/TransactionCategory')
+const TransactionCategory = mongoose.model('transactionCategories', TransactionCategorySchema)
+const ObjectId = require('mongodb').ObjectID
+const moment = require('moment')
 const csv = require('fast-csv')
 const fs = require('fs')
 
-router.post('/upload', (req, res, next) => {
+router.post('/import', (req, res, next) => {
   var file = req.files.upload
   if (file) {
 
@@ -33,8 +36,8 @@ router.post('/upload', (req, res, next) => {
         if (!result) {
           var newTransaction = new Transaction({
             owner: req.user.name,
-            category: "",
-            date: timestamp('YYYY-MM-DD HH:mm:ss'),
+            category: null,
+            date: moment().format("YYYY-MM-DD HH:mm:ss"),
             account: transaction['Auftragskonto'],
             transactiondate: transactiondate,
             valutadate: valutadate,
@@ -53,9 +56,6 @@ router.post('/upload', (req, res, next) => {
             currency: transaction['Waehrung'],
             info: transaction['Info']
           })
-          Transaction.date instanceof Date
-          Transaction.transactiondate instanceof Date
-          Transaction.valutadate instanceof Date
           newTransaction.save()
         }
       })
@@ -73,8 +73,11 @@ router.post('/upload', (req, res, next) => {
   }
 })
 
-router.get('/transactions', (req, res, next) => {
-  Transaction.find({ owner: req.user.name }, (err, transactions) => {
+router.get('/transaction_uncategorized', (req, res, next) => {
+  Transaction
+  .find({ owner: req.user.name, category: null })
+  .sort({ transactiondate: -1 })
+  .exec((err, transactions) => {
     if (err) {
       res.json({
         success: false,
@@ -87,6 +90,91 @@ router.get('/transactions', (req, res, next) => {
         transactions: transactions
       })
     }
+  })
+})
+
+router.get('/transaction_categories', (req, res, next) => {
+  TransactionCategory
+  .find({ owner: req.user.name }, (err, transactionCategories) => {
+    if (err) {
+      res.json({
+        success: false,
+        message: 'Error occured while fetching transaction categories.'
+      })
+    } else {
+      res.json({
+        success: true,
+        message: 'Transaction categories fetched.',
+        transactionCategories: transactionCategories
+      })
+    }
+  })
+})
+
+router.get('/transaction_statistics', (req, res, next) => {
+  Transaction.count({ owner: req.user.name }, (err, count) => {
+    if (err) {
+      res.json({
+        success: false,
+        message: 'Error occured while counting transaction.'
+      })
+    } else {
+      Transaction.count({ owner: req.user.name, category: null }, (err, uncategorizedCount) => {
+        if (err) {
+          res.json({
+            success: false,
+            message: 'Error occured while counting transaction.'
+          })
+        } else {
+          Transaction.findOne({ owner: req.user.name }).sort({ date: -1 }).exec((err, transaction) => {
+            if (err || transaction == null) {
+              res.json({
+                success: false,
+                message: 'Error occured while fetching last inserted transaction.'
+              })
+            } else {
+              res.json({
+                success: true,
+                message: 'Transaction statistic fetched.',
+                statistic: {
+                  lastInsert: transaction.date,
+                  count: count,
+                  uncategorizedCount: uncategorizedCount
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
+router.post('/transaction_categorize', (req, res, next) => {
+  req.body.transactions.map((id) => {
+    Transaction.findOne({ _id: ObjectId(id) }).then((transaction, err) => {
+      if (err || transaction == null) {
+        res.json({
+          success: false,
+          message: 'Error occured while updating.'
+        })
+      } else {
+        transaction.category = req.body.category
+        transaction.save((err, transaction, count) => {
+          if (err) {
+            res-json({
+              success: false,
+              message: 'Error occured while updating transaction.'
+            })
+          } else {
+            res.json({
+              success: true,
+              message: 'Transaction categorized.'
+            })
+          }
+        })
+      }
+    })
   })
 })
 
